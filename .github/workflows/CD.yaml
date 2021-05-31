@@ -1,0 +1,62 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CD
+  # Allows you to run this workflow manually from the Actions tab
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'image-tag'
+        required: true
+      tags:
+        description: 'replicas'
+        required: true
+        default: "4"
+
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    name: Deploy to staging
+    environment:
+      name: STAGING
+    steps:
+      # Checkout the repo
+      - uses: actions/checkout@master
+
+      - name: Helm Install
+        uses: azure/setup-helm@v1
+
+      - name: kubeconfig
+        run: echo "${{ secrets.KUBECONFIG }}" >> kubeconfig
+
+      - name: Helm Upgrade
+        run: |
+          helm upgrade --install prediction-service --namespace airflow-stage ./charts
+          --set replicas=${{ github.event.inputs.replicas }}" --set image-tag=${{ github.event.inputs.image-tag }}"
+
+        env:
+          KUBECONFIG: './kubeconfig'
+          HELM_EXPERIMENTAL_OCI: 1
+
+  production:
+    runs-on: ubuntu-latest
+    name: Deploy to production
+    environment:
+      name: PRODUCTION
+    steps:
+      # Checkout the repo
+      - uses: actions/checkout@master
+
+      - name: Helm Install
+        uses: azure/setup-helm@v1
+
+      - name: kubeconfig
+        run: echo "${{ secrets.KUBECONFIG }}" >> kubeconfig
+
+      - name: Helm Upgrade
+        run: |
+          helm upgrade --install prediction-service --namespace airflow-prod ./charts
+          --set replicas=${{ github.event.inputs.replicas }}" --set image.tag=${{ github.event.inputs.image-tag }}"
+        env:
+          KUBECONFIG: './kubeconfig'
+          HELM_EXPERIMENTAL_OCI: 1
