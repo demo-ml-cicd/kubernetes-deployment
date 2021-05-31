@@ -5,10 +5,10 @@ name: CD
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
+      imageTag:
         description: 'image-tag'
         required: true
-      tags:
+      replicas:
         description: 'replicas'
         required: true
         default: "4"
@@ -31,7 +31,7 @@ jobs:
 
       - name: Helm Upgrade
         run: |
-          helm upgrade --install prediction-service --namespace airflow-stage ./charts --set replicas="${{ github.event.inputs.replicas }}" --set image-tag="${{ github.event.inputs.image-tag }}"
+          helm upgrade --install prediction-service --namespace airflow-stage ./charts --set replicas="${{ github.event.inputs.replicas }}" --set image-tag="${{ github.event.inputs.imageTag }}"
         env:
           KUBECONFIG: './kubeconfig'
           HELM_EXPERIMENTAL_OCI: 1
@@ -54,7 +54,7 @@ jobs:
 
       - name: Helm Upgrade
         run: |
-          helm upgrade --install prediction-service --namespace airflow-prod ./charts --set replicas="${{ github.event.inputs.replicas }}" --set image-tag="${{ github.event.inputs.image-tag }}"
+          helm upgrade --install prediction-service --namespace airflow-prod ./charts --set replicas="${{ github.event.inputs.replicas }}" --set image-tag="${{ github.event.inputs.imageTag }}"
         env:
           KUBECONFIG: './kubeconfig'
           HELM_EXPERIMENTAL_OCI: 1
