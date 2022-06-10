@@ -34,10 +34,7 @@ jobs:
 
       - name: Helm Upgrade
         run: |
-          helm upgrade --install prediction-service --namespace airflow-stage ./charts \
-            --set replicas="${{ github.event.inputs.replicas }}" \
-            --set image.tag="${{ github.event.inputs.imageTag }}" \ 
-            --set modelPath="${{ github.event.inputs.modelPath }}"
+          helm upgrade --install prediction-service --namespace airflow-stage ./charts --set replicas="${{ github.event.inputs.replicas }}" --set image.tag="${{ github.event.inputs.imageTag }}"  --set modelPath="${{ github.event.inputs.modelPath }}"
         env:
           KUBECONFIG: './kubeconfig'
           HELM_EXPERIMENTAL_OCI: 1
@@ -60,10 +57,7 @@ jobs:
 
       - name: Helm Upgrade
         run: |
-          helm upgrade --install prediction-service --namespace airflow-prod ./charts \
-            --set replicas="${{ github.event.inputs.replicas }}" \
-            --set image.tag="${{ github.event.inputs.imageTag }}" \
-            --set modelPath="${{ github.event.inputs.modelPath }}"
+          helm upgrade --install prediction-service --namespace airflow-prod ./charts --set replicas="${{ github.event.inputs.replicas }}" --set image.tag="${{ github.event.inputs.imageTag }}" --set modelPath="${{ github.event.inputs.modelPath }}"
         env:
           KUBECONFIG: './kubeconfig'
           HELM_EXPERIMENTAL_OCI: 1
