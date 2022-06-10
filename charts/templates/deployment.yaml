@@ -25,5 +25,19 @@ spec:
           name: prediction-service
           ports:
             - containerPort: {{ .Values.service.port}}
+          env:
+            - name: MODEL_PATH
+              value:  {{ .Values.modelPath}}
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/var/secrets/google/service-account.json"
+            volumeMounts:
+              - mountPath: "/var/my-app"
+                name: gcp-cred
+                readOnly: true
+          volumes:
+            - name: gcp-cred
+              secret:
+                secretName: service-account
+
 
 
